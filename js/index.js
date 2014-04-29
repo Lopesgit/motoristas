@@ -7,22 +7,14 @@ $(document).ready( function () {
         "sAjaxSource": "datasource_user.php",
         "sPaginationType": "full_numbers",
         "aoColumns": [
-            {"mData": "pessoa_nome",
+            {"mData": "motorista_nome",
             "sClass": "center"},
-            {"mData": "filial_nome",
+            {"mData": "motorista_cel",
             "sClass": "center"},
-            {"mData": "depto_nome",
-            "sClass": "center"},
-            {"mData": "pessoa_email",
-            "sClass": "center"},
-            {"mData": "pessoa_ramal",
-            "sClass": "center"},
-            {"mData": "pessoa_ramaldireto",
-            "sClass": "center"},
-            {"mData": "pessoa_celulartim",
-            "sClass": "center"},
-            {"mData": "pessoa_nextel",
-            "sClass": "center"}          
+            {"mData": "motorista_email",
+            "sClass": "center"}
+            
+      
         ],
         "aLengthMenu": [
             [25, 25, 75, 100, 125, 150, 175, 200, -1],
@@ -32,9 +24,9 @@ $(document).ready( function () {
         "oLanguage": {
                 "sProcessing":   "Processando...",
                 "sLengthMenu":   "Mostrar _MENU_ registros",
-                "sZeroRecords":  "Não foram encontrados resultados",
-                "sInfo":         "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-                "sInfoEmpty":    "Mostrando de 0 até 0 de 0 registros",
+                "sZeroRecords":  "NÃ£o foram encontrados resultados",
+                "sInfo":         "Mostrando de _START_ atÃ© _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Mostrando de 0 atÃ© 0 de 0 registros",
                 "sInfoFiltered": "(filtrado de _MAX_ registros no total)",
                 "sInfoPostFix":  "",
                 "sSearch":       "Buscar:",
@@ -43,7 +35,7 @@ $(document).ready( function () {
                     "sFirst":    "Primeiro",
                     "sPrevious": "Anterior",
                     "sNext":     "Seguinte",
-                    "sLast":     "Último"
+                    "sLast":     "Ãšltimo"
                 }
             }
     });                               
