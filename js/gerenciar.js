@@ -1,8 +1,13 @@
+
+
 $(document).ready( function () { 
   
   var rowSelected = null;
   var rowName = null;
   var action = null;
+  var msg = null;
+  var motoristaName = null;
+  
   
   var oTable = $('#tb_func').dataTable({  
         "bJQueryUI": true,
@@ -11,21 +16,11 @@ $(document).ready( function () {
         "sAjaxSource": "datasource.php",
         "sPaginationType": "full_numbers",
         "aoColumns": [
-            {"mData": "pessoa_nome",
+            {"mData": "motorista_nome",
             "sClass": "center"},
-            {"mData": "filial_nome",
+            {"mData": "motorista_cel",
             "sClass": "center"},
-            {"mData": "depto_nome",
-            "sClass": "center"},
-            {"mData": "pessoa_email",
-            "sClass": "center"},
-            {"mData": "pessoa_ramal",
-            "sClass": "center"},
-            {"mData": "pessoa_ramaldireto",
-            "sClass": "center"},
-            {"mData": "pessoa_celulartim",
-            "sClass": "center"},
-            {"mData": "pessoa_nextel",
+            {"mData": "motorista_email",
             "sClass": "center"},
             {"mData": "status_desc",
             "sClass": "center"},
@@ -61,17 +56,15 @@ $(document).ready( function () {
     });
     
     $("#tb_func tbody").on('mouseover', 'tr', function(event){
-        rowName = oTable.fnGetData(this)['pessoa_nome'];
+        rowName = oTable.fnGetData(this)['motorista_nome'];
         rowSelected = oTable.fnGetData(this)['DT_RowId'];
     });
     
     $("#tb_func tbody ").on('click', '#edit', function(event){
-        $("#dialog-form").dialog('option', 'title', 'Alterar o cadastro de ' + rowName);
+        motoristaName = rowName;
+        $("#dialog-form").dialog('option', 'title', 'Alterar o cadastro de ' + motoristaName);
         $("#lb_status").show();
         $("#status").show();
-        
-        $("#filial").find('option:selected').removeAttr("selected");
-        $("#depto").find('option:selected').removeAttr("selected");
         $("#status").find('option:selected').removeAttr("selected");
         
         action = "UPDATE";
@@ -79,14 +72,9 @@ $(document).ready( function () {
         {action: "SELECT", id: rowSelected},
         function(data){         
             $("#id").val(rowSelected);
-            $("#nome").val(data.pessoa_nome);            
-            $('#filial option[value="'+data.id_filial+'"]').prop("selected", true); 
-            $('#depto option[value="'+data.id_depto+'"]').prop("selected", true); 
-            $("#email").val($.trim(data.pessoa_email));
-            $("#ramal").val(data.pessoa_ramal);
-            $("#ramal_direto").val(data.pessoa_ramaldireto);
-            $("#cel_tim").val(data.pessoa_celulartim);
-            $("#nextel").val(data.pessoa_nextel);
+            $("#nome").val(data.motorista_nome);
+            $("#cel_tim").val(data.motorista_cel);
+            $("#email").val($.trim(data.motorista_email));
             $('#status option[value="'+data.idstatus+'"]').prop("selected", true); 
         },
         "json");        
@@ -94,8 +82,9 @@ $(document).ready( function () {
     });
     
     $("#tb_func tbody ").on('click', '#delete', function(event){
+        motoristaName = rowName;
         action = "DELETE";
-        $("#msg").html("Deseja realmente excluir o registro de " + rowName + " ?");
+        $("#msg-conf").html("Deseja realmente excluir o registro de " + rowName + " ?");
         $( "#dialog-confirm" ).dialog( "open" );
     });
     
@@ -103,10 +92,8 @@ $(document).ready( function () {
     var name = $( "#name" ),
       email = $( "#email" ),
       status = $("#status"),
-      filial = $("#filial"),
-      depto = $("#depto"),
       allFields = $( [] ).add( name ).add( email ),
-      allSelect = $( [] ).add(status).add(filial).add(depto),
+      allSelect = $( [] ).add(status),
       tips = $( ".validateTips" );
  
     function updateTips( t ) {
@@ -151,21 +138,11 @@ $(document).ready( function () {
         return true;
       }
     }
-    
-    function ckeckFilialDepto(f, d){
-        if(f.val() === "1" && d.val() === "1"){
-            updateTips( "Para filial \"Piracicaba\" escolha um departamento diferente de \" - \"!" );
-            f.addClass( "ui-state-error" );
-            d.addClass( "ui-state-error" );
-            return false;
-        } else {
-            return true;
-        }
-    }
- 
+
     $( "#dialog-form" ).dialog({
+        
       autoOpen: false,
-      height: 950,
+      height: 550,
       width: 750,
       modal: true,
       position: "top",
@@ -179,7 +156,8 @@ $(document).ready( function () {
       },
       buttons: {
         "Salvar": function() {
-          var bValid = true;
+
+            var bValid = true;
           allFields.removeClass( "ui-state-error" );
  
 //          bValid = bValid && checkLength( name, "username", 3, 16 );
@@ -191,8 +169,7 @@ $(document).ready( function () {
          // bValid = bValid && checkRegexp( email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com.br" );
           bValid = bValid && isEmail(email, "Preencha o campo e-mail conforme exemplo: ui@jquery.com.br");
 //          bValid = bValid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-          bValid = bValid && ckeckFilialDepto(filial, depto);  
-             
+    
           if ( bValid ) {
             $( "#users tbody" ).append( "<tr>" +
               "<td>" + email.val() + "</td>" +
@@ -201,20 +178,19 @@ $(document).ready( function () {
               $.post("dataactions.php",
              datastring + '&action=' + action,
             function(data){
-                var msg = null;
+                
                 if(data && action === "UPDATE"){
-                    msg = "Contato alterado com sucesso!";
+                    msg = "Contato de " + motoristaName + " alterado com sucesso!";
                 } else if(data && action === "INSERT"){
                     msg = "Novo contato gravado com sucesso!";
                 } else{
                     msg = "Erro " + data + " ao salvar as alterações!";  
-                }
-               
-               alert(msg);
+                }               
+                $("#msg").html(msg);
+                $( "#dialog-msg" ).dialog( "open" );
+                
             });
             $( this ).dialog( "close" );
-                
-//            window.location.reload();
           }
         },
         "Cancelar": function() {
@@ -224,10 +200,9 @@ $(document).ready( function () {
       close: function() {
         allFields.val( "" ).removeClass( "ui-state-error" );
         allSelect.removeClass( "ui-state-error" );
-        
-        $("#filial").find('option:selected').removeAttr("selected");
-        $("#depto").find('option:selected').removeAttr("selected");
+
         $("#status").find('option:selected').removeAttr("selected");
+        
       }
     });
  
@@ -239,15 +214,10 @@ $(document).ready( function () {
         $("#lb_status").hide();
         $("#status").hide();
         $("#status").val("1");
-        $('#filial option').removeAttr("selected");
-        $('#depto option').removeAttr("selected");
         $("#id").val("");
         $("#nome").val("");
-        $("#email").val("");
-        $("#ramal").val("");
-        $("#ramal_direto").val("");
         $("#cel_tim").val("");
-        $("#nextel").val("");
+        $("#email").val("");
         $( "#dialog-form" ).dialog( "open" );
       });
   });
@@ -258,23 +228,22 @@ $(document).ready( function () {
       height:225,
       width:600,
       position: "top",
-      modal: true,
+      modal: true,      
       buttons: {
         "Sim": function() {           
            $.post("dataactions.php",
            {id: rowSelected, action: action },
             function(data){
-                var msg = null;
                 if(data && action === "DELETE"){
-                    msg = "Contato excluído com sucesso!";
+                    msg = "Contato de " + motoristaName + " excluído com sucesso!";
+                    deletar = true;
                 } else {
                     msg = "Erro " + data + " ao salvar as alterações!";  
                 }
-               
-               alert(msg);
+               $("#msg").html(msg);
+               $( "#dialog-msg" ).dialog( "open" );
             });  
           $( this ).dialog( "close" );
-//          window.location.reload();
         },
         "Não": function() {
           $( this ).dialog( "close" );
@@ -282,11 +251,26 @@ $(document).ready( function () {
       }
     }); 
     
+     $( "#dialog-msg" ).dialog({
+      autoOpen: false,
+      resizable: true,
+      height:225,
+      width:600,
+      position: "top",
+      modal: true,
+      buttons: {
+        "OK": function() { 
+            $( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        window.location.reload();  
+      }
+    }); 
+    
     $('#nome').keyup(function() {
         this.value = this.value.toLocaleUpperCase();
     });
-    $("#ramal").mask('9999'); 
-    $("#ramal_direto").mask('(99) 9999-9999'); 
     $("#cel_tim").focusout(function(){
         var phone, element;
         element = $(this);
@@ -297,7 +281,5 @@ $(document).ready( function () {
         } else {
             element.mask("(99) 9999-9999?9");
         }
-    }).trigger('focusout');
-    
-    $("#nextel").mask('99*999999999999');        
+    }).trigger('focusout');   
 } );

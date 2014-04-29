@@ -6,19 +6,14 @@ $output = null;
 
 if($_REQUEST['action'] == "SELECT"){
     
-    $aColumns = array( 'pessoa_nome', 'id_filial', 'id_depto', 'pessoa_email', 'pessoa_ramal', 'pessoa_ramaldireto', 
-                        'pessoa_celulartim', 'pessoa_nextel', 'idstatus');
+   $aColumns = array( 'motorista_nome', 'motorista_cel', 'motorista_email', 'idstatus');
 
     /* DB table to use */
-    $sTable = "pessoas p";
+    $sTable = "motoristas m";
     
     $sInner = " INNER JOIN
-                    filiais f ON f.id_filial = p.pessoa_filial
-                INNER JOIN
-                    deptos d ON d.id_depto = p.pessoa_depto
-                INNER JOIN
-                    status s ON s.idstatus = p.pessoa_status ";
-    $sWhere = "WHERE p.id_pessoa = {$_REQUEST['id']}";
+                    status s ON s.idstatus = m.motorista_status ";
+    $sWhere = "WHERE m.id_motorista = {$_REQUEST['id']}";
     
     $sQuery = "
             SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $aColumns))."`
@@ -36,7 +31,7 @@ if($_REQUEST['action'] == "SELECT"){
             {
                     if ( $aColumns[$i] != ' ' )
                     {      
-                        $row[$aColumns[$i]] = $aRow[ $aColumns[$i] ];                      
+                        $row[$aColumns[$i]] = utf8_encode($aRow[ $aColumns[$i] ]);                      
                             
                     }
             }
@@ -46,13 +41,11 @@ if($_REQUEST['action'] == "SELECT"){
 
 if($_REQUEST['action'] == "UPDATE"){
     
-    $aFields =  "`pessoa_nome` =  '".utf8_decode($_REQUEST['nome'])."' , `pessoa_filial` =   {$_REQUEST['filial']}, `pessoa_depto` = {$_REQUEST['depto']}, 
-                        `pessoa_email` =  '".utf8_decode($_REQUEST['email'])."' , `pessoa_ramal` = '{$_REQUEST['ramal']}', `pessoa_ramaldireto` = '{$_REQUEST['ramal_direto']}', 
-                        `pessoa_celulartim`  = '{$_REQUEST['cel_tim']}', `pessoa_nextel` = '{$_REQUEST['nextel']}', 
-                        `pessoa_status`  = {$_REQUEST['status']}";
+    $aFields =  "`motorista_nome` =  '".utf8_decode($_REQUEST['nome'])."' ,`motorista_cel`  = '{$_REQUEST['cel_tim']}', `motorista_email` =  '".utf8_decode($_REQUEST['email'])."',
+                `motorista_status`  = {$_REQUEST['status']}";
     
-    $sWhere = "WHERE `id_pessoa` = {$_REQUEST['id']}";
-    $sTable = "pessoas";
+    $sWhere = "WHERE `id_motorista` = {$_REQUEST['id']}";
+    $sTable = "motoristas";
     $sQuery = "
             UPDATE $sTable 
             SET $aFields
@@ -65,19 +58,15 @@ if($_REQUEST['action'] == "UPDATE"){
 
 if($_REQUEST['action'] == "INSERT"){
     
-    $aFields = array( 'pessoa_nome', 'pessoa_filial', 'pessoa_depto', 'pessoa_email', 'pessoa_ramal', 'pessoa_ramaldireto', 
-                        'pessoa_celulartim', 'pessoa_nextel');
+    $aFields = array( 'motorista_nome', 'motorista_cel', 'motorista_email');
     
-    $aValues =  "'".utf8_decode($_REQUEST['nome'])."' ,{$_REQUEST['filial']}, {$_REQUEST['depto']}, 
-                        '".utf8_decode($_REQUEST['email'])."' ,'{$_REQUEST['ramal']}', '{$_REQUEST['ramal_direto']}', 
-                        '{$_REQUEST['cel_tim']}',  '{$_REQUEST['nextel']}'";
-    $sTable = "pessoas";
+    $aValues =  "'".utf8_decode($_REQUEST['nome'])."' ,'{$_REQUEST['cel_tim']}','".utf8_decode($_REQUEST['email'])."'";
+    $sTable = "motoristas";
     $sQuery = "
             INSERT INTO $sTable 
             (`".str_replace(" , ", " ", implode("`, `", $aFields))."`)
             VALUES ($aValues)
             ";
-//    die($sQuery);
     $rResult = $gaSql['link']->query($sQuery) or fatal_error( 'MySQL Error: ' . $gaSql['link']->connect_errno);
     
     $output = $rResult; 
@@ -86,9 +75,9 @@ if($_REQUEST['action'] == "INSERT"){
 
 if($_REQUEST['action'] == "DELETE"){
     
-    $sWhere = "WHERE `id_pessoa` = {$_REQUEST['id']}";    
+    $sWhere = "WHERE `id_motorista` = {$_REQUEST['id']}";    
     
-    $sTable = "pessoas";
+    $sTable = "motoristas";
     
     $sQuery = "
             DELETE FROM $sTable 

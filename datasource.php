@@ -12,22 +12,17 @@ header ('Content-type: text/html; charset=UTF-8');
     /* Array of database columns which should be read and sent back to DataTables. Use a space where
      * you want to insert a non-database field (for example a counter or static image)
      */
-    $aColumns = array( 'pessoa_nome', 'filial_nome', 'depto_nome', 'pessoa_email', 'pessoa_ramal', 
-                        'pessoa_ramaldireto', 'pessoa_celulartim', 'pessoa_nextel', 'status_desc', 'id_pessoa');
+    $aColumns = array( 'motorista_nome', 'motorista_cel', 'motorista_email', 'status_desc', 'id_motorista');
 
     /* Indexed column (used for fast and accurate table cardinality) */
-    $sIndexColumn = "id_pessoa";
+    $sIndexColumn = "id_motorista";
 
     /* DB table to use */
-    $sTable = "pessoas p";
+    $sTable = "motoristas m";
     
     $sInner = " INNER JOIN
-                    filiais f ON f.id_filial = p.pessoa_filial
-                INNER JOIN
-                    deptos d ON d.id_depto = p.pessoa_depto
-                INNER JOIN
-                    status s ON s.idstatus = p.pessoa_status ";
-
+                    status s ON s.idstatus = m.motorista_status ";
+    
     /* Database connection information */
     require 'connection.php';
 
@@ -100,8 +95,7 @@ header ('Content-type: text/html; charset=UTF-8');
                     $sWhere .= "`".$aColumns[$i]."` LIKE '%".  utf8_decode($gaSql['link']->real_escape_string($_GET['sSearch_'.$i]))."%' ";
             }
     }
-
-
+        
     /*
      * SQL queries
      * Get data to display
@@ -110,7 +104,7 @@ header ('Content-type: text/html; charset=UTF-8');
             SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $aColumns))."`
             FROM   $sTable
             $sInner    
-            $sWhere
+            $sWhere 
             $sOrder
             $sLimit
             ";
@@ -132,7 +126,6 @@ header ('Content-type: text/html; charset=UTF-8');
     $rResultTotal = $gaSql['link']->query($sQuery) or fatal_error( 'MySQL Error: ' . $gaSql['link']->connect_errno);
     $aResultTotal = mysqli_fetch_array($rResultTotal);
     $iTotal = $aResultTotal[0];
-
 
     /*
      * Output
@@ -157,7 +150,7 @@ header ('Content-type: text/html; charset=UTF-8');
                     else if ( $aColumns[$i] != ' ' )
                     {
                             /* General output */
-                            if( $aColumns[$i] == 'id_pessoa'){                                
+                            if( $aColumns[$i] == 'id_motorista'){                                
                                 $row["DT_RowId"] = utf8_encode($aRow[$aColumns[$i]]);
                             } else{
                                 $row[$aColumns[$i]] = utf8_encode($aRow[ $aColumns[$i] ]);

@@ -12,21 +12,13 @@ header ('Content-type: text/html; charset=UTF-8');
     /* Array of database columns which should be read and sent back to DataTables. Use a space where
      * you want to insert a non-database field (for example a counter or static image)
      */
-    $aColumns = array('pessoa_nome', 'filial_nome', 'depto_nome', 'pessoa_email', 'pessoa_ramal', 
-                        'pessoa_ramaldireto', 'pessoa_celulartim', 'pessoa_nextel', 'status_desc');
+    $aColumns = array( 'motorista_nome', 'motorista_cel', 'motorista_email', 'id_motorista');
 
     /* Indexed column (used for fast and accurate table cardinality) */
-    $sIndexColumn = "id_pessoa";
+    $sIndexColumn = "id_motorista";
 
     /* DB table to use */
-    $sTable = "pessoas p";
-    
-    $sInner = " INNER JOIN
-                    filiais f ON f.id_filial = p.pessoa_filial
-                INNER JOIN
-                    deptos d ON d.id_depto = p.pessoa_depto
-                INNER JOIN
-                    status s ON s.idstatus = p.pessoa_status ";
+    $sTable = "motoristas m";
 
     /* Database connection information */
     require 'connection.php';
@@ -101,7 +93,17 @@ header ('Content-type: text/html; charset=UTF-8');
                     $sWhere .= "`".$aColumns[$i]."` LIKE '%".utf8_decode($gaSql['link']->real_escape_string($_GET['sSearch_'.$i]))."%' ";
             }
     }
-
+    
+    if ( $sWhere == "" )
+    {
+            $sWhere2 = "WHERE ";
+    }
+    else
+    {
+            $sWhere2 = " AND ";
+    }
+    $sWhere2 .= "m.motorista_status = 1"; 
+    
 
     /*
      * SQL queries
@@ -110,8 +112,8 @@ header ('Content-type: text/html; charset=UTF-8');
     $sQuery = "
             SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $aColumns))."`
             FROM   $sTable
-            $sInner    
             $sWhere
+            $sWhere2    
             $sOrder
             $sLimit
             ";
@@ -158,7 +160,7 @@ header ('Content-type: text/html; charset=UTF-8');
                     else if ( $aColumns[$i] != ' ' )
                     {
                             /* General output */
-                            if($aColumns[$i] == 'pessoa_email'){
+                            if($aColumns[$i] == 'motorista_email'){
                                 $row[$aColumns[$i]] = "<a href='mailto:".utf8_encode($aRow[ $aColumns[$i] ])."' target='_top'>".utf8_encode($aRow[ $aColumns[$i] ])."</a>";
                             }else{
                                 $row[$aColumns[$i]] = utf8_encode($aRow[ $aColumns[$i] ]);
