@@ -68,6 +68,7 @@ $rStatus = $gaSql['link']->query($qStatus);
                     <h2>Gerenciar Contatos de Motoristas</h2>
                     <p>Permite listar, inserir, alterar e excluir contatos dos motoristas da Flecha de Prata que são exibidos na intranet.</p>
                     <button id="contatoNovo" name="contatoNovo">Novo Contato</button>
+                    <button id="atualizarLista" name="atualizarLista">Atualizar Lista</button>
                 </div>
             </div>
             <div id="demo" class="div-right">

@@ -264,9 +264,19 @@ $(document).ready( function () {
         }
       },
       close: function() {
-        window.location.reload();  
+
       }
     }); 
+    
+    $("#atualizarLista").button().click(function() {
+        window.location.reload(); 
+    });
+    
+    $("#email").focusout(function(){       
+        if($(this).val().indexOf('@') === -1){
+            $(this).val($(this).val() + "@flechadeprata.com.br");   
+        }     
+    }).trigger('focusout');
     
     $('#nome').keyup(function() {
         this.value = this.value.toLocaleUpperCase();
